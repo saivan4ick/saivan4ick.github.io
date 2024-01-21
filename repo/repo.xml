@@ -1,0 +1,14 @@
+<repo>
+	<footerlinks>
+		<link>
+			<name>Я в X (Twitter)</name>
+			<url>https://twitter.com/saivan__</url>
+			<iconclass>fa fa-twitter</iconclass>
+		</link>
+		<link>
+			<name>Основной сайт репозитория</name>
+			<url></url>
+			<iconclass></iconclass>
+		</link>
+	</footerlinks>
+</repo>
