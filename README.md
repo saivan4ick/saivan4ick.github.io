@@ -1,7 +1,7 @@
 # saivan4ick.github.io
 <div class="container-lg px-3 my-5 markdown-body">
 
-# [SAIVAN - оффициальный сайт](/)
+# [SAIVAN - официальный сайт](/)
 
 <div>
 
