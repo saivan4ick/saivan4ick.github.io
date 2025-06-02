@@ -4,10 +4,11 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2G79G0F9EV"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-2G79G0F9EV');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2G79G0F9EV');
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -43,10 +44,155 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            min-height: 100%;
+            background: #f7fafd;
+        }
+        body {
+            font-family: 'Karla', Arial, sans-serif;
+            font-size: 1.1em;
+            color: #222;
+            line-height: 1.6;
+        }
+        .container-lg {
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 32px 40px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(33,150,243,0.08), 0 1.5px 8px rgba(0,0,0,0.04);
+        }
+        .saivan-title {
+            font-family: 'Karla', Arial, sans-serif;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 3em;
+            text-align: center;
+            color: #1976d2;
+            margin: 0 auto 1em auto;
+            letter-spacing: 0.05em;
+            word-break: break-word;
+            text-shadow: 0 2px 8px rgba(33,150,243,0.08);
+        }
+        .bio-title, .hub-title {
+            font-family: 'Karla', Arial, sans-serif;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 2.2em;
+            text-align: center;
+            color: #1976d2;
+            margin: 1.5em auto 0.7em auto;
+            letter-spacing: 0.03em;
+            word-break: break-word;
+            text-shadow: 0 1px 4px rgba(33,150,243,0.07);
+        }
+        nav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        marquee {
+            display: block;
+            margin: 0 auto 1.5em auto;
+            font-size: 1.2em;
+            color: #2196f3;
+            font-family: 'Karla', Arial, sans-serif;
+            max-width: 100%;
+            overflow: hidden;
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 0.3em 0.7em;
+        }
+        p, h5 {
+            font-family: 'Karla', Arial, sans-serif;
+            font-size: 1.1em;
+            color: #222;
+            line-height: 1.7;
+            word-break: break-word;
+            margin-bottom: 1.2em;
+        }
+        h5 {
+            text-align: center;
+            color: #1976d2;
+            margin-top: 2em;
+            font-size: 1em;
+            letter-spacing: 0.04em;
+        }
+        a {
+            color: #1976d2;
+            word-break: break-all;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: #0d47a1;
+            text-decoration: underline;
+        }
+        /* Social links block styling */
+        .social-links {
+            background: #f1f8fe;
+            border-radius: 10px;
+            padding: 1.2em 1em 1em 1em;
+            margin-bottom: 2em;
+            box-shadow: 0 1px 4px rgba(33,150,243,0.04);
+        }
+        .social-links a {
+            display: inline-block;
+            margin-bottom: 0.3em;
+        }
+        /* Indented links for donate/youtube join */
+        .indent-link {
+            display: inline-block;
+            width: 17.5em;
+        }
+        .indent-link-yt {
+            display: inline-block;
+            width: 8.2em;
+        }
+        /* Responsive styles */
+        @media (max-width: 900px) {
+            .container-lg {
+                max-width: 99vw;
+                padding: 16px 2vw;
+            }
+        }
+        @media (max-width: 600px) {
+            .container-lg {
+                padding: 8px 1vw;
+                margin: 10px auto;
+            }
+            .saivan-title {
+                font-size: 1.5em;
+            }
+            .bio-title, .hub-title {
+                font-size: 1.1em;
+            }
+            marquee {
+                font-size: 1em;
+                padding: 0.2em 0.2em;
+            }
+            p, h5 {
+                font-size: 0.98em;
+            }
+            .social-links {
+                padding: 0.7em 0.5em 0.7em 0.5em;
+            }
+            .indent-link {
+                width: 10.5em;
+            }
+            .indent-link-yt {
+                width: 5.2em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container-lg px-3 my-5 markdown-body">
-        <h1 class="text-center"><a href="/">SAIVAN - официальный сайт</a></h1>
+        <h1 class="saivan-title"><a href="/" style="color:inherit; text-decoration:none;">SAIVAN - официальный сайт</a></h1>
         <style>
             nav {
                 list-style-type: none;
@@ -56,31 +202,36 @@
         </style>
         <header></header>
         <marquee>музыкант, блогер, программист, Linux юзер</marquee>
-        <h1 id="bio">биография</h1>
+        <h1 id="bio" class="bio-title">биография</h1>
         <p>
             Зовут Вася, фамилию зачем вам знать? Да и наверное некоторые вещи тоже.<br>
             Страна/регион: Беларусь, Минская область<br>
-            Любимые ОС: Windows 11, ядро Linux<br>
+            Любимые ОС: Windows 10, ядро Linux<br>
             Телефон: iPhone SE (Gen. 2) iOS 18<br>
             Наверное стану программистом, блогером и композитором<br>
             Языки программирования которые учу/буду учить/наверное хочу выучить: Python, C++ и много чего (Хотя зная себя я возможно выучу)
         </p>
-        <h1 id="хаб-для-соцсетей-сайванчика">хаб для соцсетей сайванчика</h1>
-        <p>
+        <h1 id="хаб-для-соцсетей-сайванчика" class="hub-title">хаб для соцсетей сайванчика</h1>
+        <div class="social-links">
             Telegram: <a href="https://t.me/saivan4ick">https://t.me/saivan4ick</a><br>
-            ТТ: <a href="https://www.tiktok.com/@sai.vann">https://www.tiktok.com/@sai.vann</a><br>
+            ТТ: <a href="https://www.tiktok.com/@saivannxd">https://www.tiktok.com/@saivannxd</a><br>
             Discord Сервер: <a href="https://discord.gg/MyJ9mT4yUx">https://discord.gg/MyJ9mT4yUx</a><br>
-            YouTube: <a href="https://youtube.com/saivan?sub_confirmation=1">https://youtube.com/saivan</a><br>
+            YouTube: <a href="https://youtube.com/@saivan">https://youtube.com/@saivan</a><br>
+            <span class="indent-link-yt"></span><a href="https://www.youtube.com/@saivan/join">https://www.youtube.com/@saivan/join</a><br>
             Steam: <a href="https://steamcommunity.com/id/saivan">https://steamcommunity.com/id/saivan</a><br>
             ВКонтакте: <a href="https://vk.com/saivann">https://vk.com/saivann</a><br>
-            Instagram: <a href="https://www.instagram.com/sai__van/">https://www.instagram.com/saivan4ick</a><br>
-            Twitch: <a href="https://www.twitch.tv/saivan__">https://www.twitch.tv/saivan4ick</a><br>
+            Instagram: <a href="https://www.instagram.com/saivannxd">https://www.instagram.com/saivannxd</a><br>
+            Twitch: <a href="https://www.twitch.tv/saivan4ick">https://www.twitch.tv/saivan4ick</a><br>
             Поддержать денежкой: <a href="https://new.donatepay.ru/@saivan">https://new.donatepay.ru/@saivan</a><br>
             Дзен: <a href="https://dzen.ru/saivan">https://dzen.ru/saivan</a><br>
-            Twitter (X): <a href="https://twitter.com/saivan__">https://twitter.com/saivan4ick</a><br>
+            Twitter (X): <a href="https://twitter.com/saivan4ick">https://twitter.com/saivan4ick</a><br>
             Spotify: <a href="https://open.spotify.com/artist/5UZDcFFnZVJtb9Kxv4xnFj?si=qWQMw55CS8euSwTzsDV3qw">https://open.spotify.com/artist/5UZDcFFnZVJtb9Kxv4xnFj?si=qWQMw55CS8euSwTzsDV3qw</a><br>
-        </p>
+        </div>
         <h5 id="powered-by-github-superpowers">Powered by GitHub superpowers!</h5>
+        <div style="text-align:center; margin-top:2em;">
+            <a href="index.html" style="margin:0 0.5em; padding:0.5em 1.2em; font-family:'Karla',Arial,sans-serif; font-weight:700; border-radius:6px; border:1px solid #1976d2; background:#e3f2fd; color:#1976d2; text-decoration:none; cursor:pointer;">русский</a>
+            <a href="en.html" style="margin:0 0.5em; padding:0.5em 1.2em; font-family:'Karla',Arial,sans-serif; font-weight:700; border-radius:6px; border:1px solid #1976d2; background:#e3f2fd; color:#1976d2; text-decoration:none; cursor:pointer;">english</a>
+        </div>
     </div>
     <script src="js/script.js" crossorigin="anonymous"></script>
     <script>script.add();</script>
