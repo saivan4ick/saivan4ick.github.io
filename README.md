@@ -27,17 +27,17 @@ Telegram: <https://t.me/saivan4ick>
 Discord Сервер:
 [https://discord.gg/MyJ9mT4yUx/](https://discord.gg/MyJ9mT4yUx)  
 YouTube:
-[https://youtube.com/saivan](https://youtube.com/saivan?sub_confirmation=1)  
+[https://youtube.com/saivan](https://youtube.com/@saivan)  
 Steam: <https://steamcommunity.com/id/saivan>  
 ВКонтакте: <https://vk.com/saivann>  
 Instagram:
-[https://www.instagram.com/saivan4ick/](https://www.instagram.com/sai__van/)  
+[https://www.instagram.com/saivannxd/](https://www.instagram.com/saivannxd)  
 Twitch:
-[https://www.twitch.tv/saivan4ick](https://www.twitch.tv/saivan__)  
+[https://www.twitch.tv/saivan4ick](https://www.twitch.tv/saivan4ick)  
 Поддержать денежкой: <https://new.donatepay.ru/@saivan>  
 Дзен: <https://dzen.ru/saivan>  
 Twitter (X):
-[https://twitter.com/saivan4ick](https://twitter.com/saivan__)  
+[https://twitter.com/saivan4ick](https://twitter.com/saivan4ick)  
 Spotify<https://open.spotify.com/artist/5UZDcFFnZVJtb9Kxv4xnFj?si=qWQMw55CS8euSwTzsDV3qw>  
 
 ##### Powered by GitHub superpowers!
