@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: https://www.saivann.ru
+Allow: https://www.saivann.ru/index.html
+Allow: https://saivann.ru/en.html
+Allow: https://saivann.ru/matrix.html
+Allow: https://saivann.ru/snake.html
+Sitemap: https://www.saivann.ru/sitemap.xml
+Host: saivann.ru
