@@ -1,0 +1,31 @@
+.video-thumb {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.video-thumb:hover {
+  transform: scale(1.05);
+}
+
+.video-thumb:before {
+  content: "";
+  position: absolute;
+  background: url("../../assets/img/play.svg") no-repeat center center;
+  background-size: 6%;
+  filter: drop-shadow(4px 4px 10px rgba(0,0,0,0.4));
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: 0.2s;
+}
+
+.video-thumb:hover:before {
+  opacity: 1;
+}
+

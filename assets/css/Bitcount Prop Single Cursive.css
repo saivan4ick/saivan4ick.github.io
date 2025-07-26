@@ -1,0 +1,12 @@
+@font-face {
+	font-family: 'Bitcount Prop Single Cursive';
+	src: url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-26958957a55f2a47601af50539245a8c.eot) format('embedded-opentype'),
+	url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-26958957a55f2a47601af50539245a8c.eot) format('embedded-opentype'),
+	url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-e37f63d263ee86b95e909ea731027391.woff2) format('woff2'),
+	url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-53513e002fafa39670cb1a6a9b4b9bfc.woff) format('woff'),
+	url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-facb8ce943226a5928184b9647bae6eb.ttf) format('truetype'),
+	url(../../assets/fonts/Bitcount%20Prop%20Single%20Cursive-47918ab28c5180a7cb3e89ff29386544.svg) format('svg');
+	font-weight: 400;
+	font-style: normal;
+	font-display: auto;
+}
