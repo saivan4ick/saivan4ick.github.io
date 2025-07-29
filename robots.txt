@@ -1,0 +1,14 @@
+Sitemap: https://saivann.ru/sitemap.xml
+Sitemap: https://saivan.social/sitemap.xml
+Sitemap: https://saivan.live/sitemap.xml
+
+User-agent: *
+Allow: https://www.saivann.ru/index.html
+Allow: https://www.saivann.ru/iso.html
+Allow: https://www.saivann.ru/support.html
+Allow: https://www.saivan.social/index.html
+Allow: https://www.saivan.social/iso.html
+Allow: https://www.saivan.social/support.html
+Allow: https://www.saivan.live/index.html
+Allow: https://www.saivan.live/iso.html
+Allow: https://www.saivan.live/support.html
