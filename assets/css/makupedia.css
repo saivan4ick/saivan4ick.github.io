@@ -1,0 +1,169 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'sf';
+  background-color: #f8f9fa;
+  color: #222222;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #f8f9fa;
+  color: #222222;
+  padding: 1px 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar {
+  background-color: #eef3f7;
+  color: #222222;
+  width: 250px;
+  position: fixed;
+  top: 0px;
+  bottom: 0;
+  overflow-y: auto;
+  border-right: 2px solid #d3d3d3;
+  padding: 15px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  color: #222222;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+}
+
+.sidebar a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  text-decoration: underline;
+}
+
+main {
+  margin-left: 270px;
+  padding: 20px;
+}
+
+h1 {
+  border-bottom: 2px solid #d3d3d3;
+  padding-bottom: 5px;
+  color: #222222;
+}
+
+h2 {
+  color: #007bff;
+  margin-top: 20px;
+}
+
+footer {
+  background-color: #f8f9fa;
+  color: #222222;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+  padding: 10px 20px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  color: #222222;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.social-link:hover {
+  text-decoration: underline;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.telegram-link {
+  display: flex;
+  align-items: center;
+  color: #222222;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.telegram-link:hover {
+  text-decoration: underline;
+}
+
+.telegram-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.header-container .site-icon {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+    width: 250px;
+    position: fixed;
+    top: 0px;
+    bottom: 0;
+    overflow-y: auto;
+    border-right: 2px solid #d3d3d3;
+    background-color: #eef3f7;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 900px) {
+  .header-container {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    color: white;
+  }
+}
+
+@media (max-width: 900px) {
+  main {
+    margin-left: 20px;
+    padding: 20px;
+  }
+}
+
