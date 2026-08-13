@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>способы поддержки сайвана</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+25&family=Krona+One&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <iframe id="bg-iframe" src="background.html" title="Background Animation"></iframe>
+
+  <div class="container">
+    <header class="site-header">
+      <a href="index.html" class="back-link">&larr; на главную</a>
+      <h1 class="logo" style="color: inherit; text-decoration: none;">способы меня поддержать</h1>
+      <p class="bio">
+       если у вас появилось желание поддержать меня <br>то можете ознакомится тут как это сделать
+       <br>об альтернативных методах напишите пожалуйста мне в<a href="https://t.me/saivann" class="item-link" arget="_blank" rel="noopener noreferrer">телеграм</a>
+      </p>
+    </header>
+    <main class="content-sections">
+      <section class="section-block">
+        <div class="donate-grid">
+          <div class="donate-card">
+            <div class="donate-card-info">
+              <span class="donate-name">Карта МИР</span>
+              <span class="donate-desc">Перевод на белорусскую карту</span>
+            </div>
+            <button type="button" class="donate-btn copy-btn" data-copy="9112382024546085">
+              скопировать номер <span class="arrow">&rarr;</span>
+            </button>
+          </div>
+          <div class="donate-card">
+            <div class="donate-card-info">
+              <span class="donate-name">DonationAlerts</span>
+              <span class="donate-desc">база для донатов</span>
+            </div>
+            <a href="https://donationalerts.com/r/saivan4ick" target="_blank" rel="noopener" class="donate-btn">
+              отправить <span class="arrow">&rarr;</span>
+            </a>
+          </div>
+
+          <!-- Crypto TON -->
+          <div class="donate-card">
+            <div class="donate-card-info">
+              <span class="donate-name">Crypto (TON / Telegram Wallet)</span>
+              <span class="donate-desc">донат в Gram (бывш. TON)</span>
+            </div>
+            <button type="button" class="donate-btn copy-btn" data-copy="UQAt45Z7h2f-hYew51bxP0rH8j7GDommpk8Voxxbbhu96HKC">
+              скопировать TON <span class="arrow">&rarr;</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Скопировано в буфер обмена!</div>
+
+  <script src="script.js"></script>
+</body>
+</html>

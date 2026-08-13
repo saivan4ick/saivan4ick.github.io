@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coolwall</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        input {position: absolute;
+  display: block ruby;
+  background: transparent;
+  border: none !important;
+  display: grid;
+  opacity: 0;}
+    </style>
+</head>
+<body>
+    <input type="color" id="favcolor" value="#813D9C">
+    <canvas id="shaderCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('shaderCanvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+        if (!gl) {
+            alert('no gl bro');
+            throw new Error('no gl bro');
+        }
+        let currentColor = '#813D9C';
+        function hexToVec3(hex) {
+            hex = hex.replace('#', '');
+            r = parseInt(hex.substring(0, 2), 16) / 255;
+            g = parseInt(hex.substring(2, 4), 16) / 255;
+            b = parseInt(hex.substring(4, 6), 16) / 255;
+
+            return [r, g, b];
+        }
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        const vertexShaderSource = `
+            attribute vec2 aPosition;
+            varying vec2 vUv;
+
+            void main() {
+                vUv = aPosition * 0.5 + 0.5;
+                gl_Position = vec4(aPosition, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision highp float;
+
+            uniform vec2 center;
+            uniform vec2 resolution;
+            uniform float time;
+            uniform vec2 mouse;
+            uniform float pulse1;
+            uniform float pulse2;
+            uniform float pulse3;
+            uniform vec3 blueColor;
+            varying vec2 vUv;
+
+            vec3 lerp(vec3 color1, vec3 color2, float value) {
+                return value * (color2 - color1) + color1;
+            }
+
+            float wave(float x, float frequency, float speed, float midHeight, float maxHeight) {
+                return (sin(frequency * (x + speed * (((1. - (pow(cos(0.002 * (time + 400.)), 2.) + 1.) / 2.) + .1) * 2048.))) * (maxHeight - midHeight)) + midHeight;
+            }
+
+            float percentHigh(float currentY, float waveHeight, float maxHeight, float power) {
+                float percentWave = max(waveHeight - currentY, 0.0) / maxHeight;
+                return pow(1.0 - percentWave, power);
+            }
+
+            float waveColor(vec2 uv, float waveHeight, float maxHeight, float frequency, float power) {
+                float percentWave = percentHigh(uv.y, waveHeight, maxHeight, power);
+                return clamp(percentWave + 0.8, 0.0, 1.0);
+            }
+
+            void main() {
+                vec2 uv = vUv;
+                vec3 blue = blueColor;
+                vec3 blue2 = blueColor * 0.8;
+                float amount = (uv.x + uv.y) / 2.0;
+                vec3 bg = lerp(blue2, blue, amount);
+
+                float midHeight1 = 0.4;
+                float maxHeight1 = 0.5 + wave(0.0, 4.0, 0.02, 0.0, 0.02);
+                float power1 = 50.0;
+                float frequency1 = 2.0 + wave(0.0, 3.0, 0.03, 0.0, 0.02);
+                float speed1 = 0.4 + wave(0.0, 2.2, 0.04, 0.0, 0.01);
+                float waveHeight1 = wave(uv.x, frequency1, speed1, midHeight1, maxHeight1);
+                float waveCol1 = waveColor(uv, waveHeight1, maxHeight1, frequency1, power1);
+
+                float midHeight2 = 0.42;
+                float maxHeight2 = 0.54 + wave(0.0, 3.0, 0.04, 0.0, 0.02);
+                float power2 = 50.0;
+                float frequency2 = 2.1 + wave(0.0, 4.0, 0.05, 0.0, 0.02);
+                float speed2 = 0.3 + wave(0.0, 2.0, 0.02, 0.0, 0.01);
+                float waveHeight2 = wave(uv.x, frequency2, speed2, midHeight2, maxHeight2);
+                float waveCol2 = waveColor(uv, waveHeight2, maxHeight2, frequency2, power2);
+
+                vec3 col = bg;
+                if (uv.y < waveHeight1)
+                    col = waveCol1 * col;
+                if (uv.y < waveHeight2)
+                    col = waveCol2 * col;
+
+                gl_FragColor = vec4(col, 1.0);
+            }
+        `;
+
+        function compileShader(gl, source, type) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Ошибка компиляции шейдера:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+
+        const vertexShader = compileShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+        const fragmentShader = compileShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
+
+
+        const program = gl.createProgram();
+
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('no linking cuz', gl.getProgramInfoLog(program));
+        }
+
+        const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+        const vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const positionAttributeLocation = gl.getAttribLocation(program, 'aPosition');
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const resolutionUniformLocation = gl.getUniformLocation(program, 'resolution');
+        const timeUniformLocation = gl.getUniformLocation(program, 'time');
+        const centerUniformLocation = gl.getUniformLocation(program, 'center');
+        const mouseUniformLocation = gl.getUniformLocation(program, 'mouse');
+        const pulse1UniformLocation = gl.getUniformLocation(program, 'pulse1');
+        const pulse2UniformLocation = gl.getUniformLocation(program, 'pulse2');
+        const pulse3UniformLocation = gl.getUniformLocation(program, 'pulse3');
+        let startTime = Date.now();
+
+        const colorPicker = document.getElementById('favcolor');
+        [r, g, b] = hexToVec3(currentColor);
+        colorPicker.addEventListener('input', function() {
+            const color = hexToVec3(this.value);
+            gl.uniform3f(gl.getUniformLocation(program, 'blueColor'), r, g, b);
+            render();
+        });
+        function render() {
+            const currentTime = (Date.now() - startTime) / 1000;
+
+            gl.useProgram(program);
+
+            gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
+            gl.uniform1f(timeUniformLocation, currentTime);
+            gl.uniform2f(centerUniformLocation, canvas.width/2, canvas.height/2);
+            gl.uniform2f(mouseUniformLocation, 0, 0);
+            gl.uniform1f(pulse1UniformLocation, 0.5);
+            gl.uniform1f(pulse2UniformLocation, 0.3);
+            gl.uniform1f(pulse3UniformLocation, 0.7);
+            gl.uniform3f(gl.getUniformLocation(program, 'blueColor'), r, g, b);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            requestAnimationFrame(render);
+        }
+
+        render();
+    </script>
+</body>
+</html>

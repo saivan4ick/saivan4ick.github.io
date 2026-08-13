@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>сайт сайван</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+25&family=Krona+One&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background WebGL Shader Canvas -->
+  <iframe id="bg-iframe" src="background.html" title="Background Animation"></iframe>
+
+  <div class="container">
+    
+    <!-- Header Section -->
+    <header class="site-header">
+      <h1 class="logo" id="logoText">
+        <img src="img/killua.gif" alt="Killua" class="logo-gif">
+        <span>saivan</span>
+      </h1>
+      <p class="bio">
+        это Василий, он сидит за компьютером.<br>Программирует какие-то штуки, проекты, программы, что то.<br>Также делает что то во Всемирной Паутине.
+      </p>
+    </header>
+
+    <!-- Main Content Sections -->
+    <main class="content-sections">
+      
+      <!-- Section 1 -->
+      <section class="section-block">
+        <h2 class="section-title">что то мое</h2>
+        <div class="item-group">
+          <a href="donate.html" class="item-link">
+            <span>поддержка меня</span> <span class="arrow">&rarr;</span>
+          </a>
+          <p class="item-subtext">способы меня денежно поддержать</p>
+          
+          <!-- Glowing Social Icons Row -->
+          <div class="social-icons-row">
+            <a href="https://t.me/saivan4ick" target="_blank" rel="noopener" class="social-icon-link telegram" title="Telegram">
+              <img src="img/Telegram_logo.webp" alt="Telegram" class="social-icon-img">
+            </a>
+            <a href="https://youtube.com/saivan" target="_blank" rel="noopener" class="social-icon-link youtube" title="YouTube">
+              <img src="img/YouTube_logo.webp" alt="YouTube" class="social-icon-img">
+            </a>
+            <a href="https://tiktok.com/@saivannxd" target="_blank" rel="noopener" class="social-icon-link tiktok" title="TikTok">
+              <img src="img/logo-tik-tok_578229-290.avif" alt="TikTok" class="social-icon-img">
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="section-block">
+        <h2 class="section-title">штуки которые делал</h2>
+        <div class="item-group">
+          <a href="https://github.com/saivan4ick/saivanbot" target="_blank" rel="noopener" class="item-link">
+            <span>saivanbot</span>
+            <span class="arrow">&rarr;</span>
+          </a>
+          <p class="item-subtext">telegram бот предложка с возможностью<br>отправить сообщения (также с картинками) анонимно</p>
+          <p class="item-subtext" style="margin-top: 10px; opacity: 0.8;">пока что все в будущем буду дополнять</p>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="section-block">
+        <h2 class="section-title">как связаться со мной?</h2>
+        <div class="item-group" style="flex-direction: row; gap: 8px;">
+          <a href="https://t.me/saivann" target="_blank" rel="noopener" class="item-link">телеграм</a>
+          <a href="mailto:vasilsalkou@gmail.com" target="_blank" rel="noopener" class="item-link">мэйлбокс</a>
+        </div>
+      </section>
+
+      <!-- Section 4: Моя кнопка -->
+      <section class="section-block">
+        <h2 class="section-title">моя кнопка</h2>
+        <div class="item-group">
+          <img src="img/button_saivan.png" alt="Моя кнопка saivan" class="badge-88x31 my-button-badge">
+          <textarea class="button-code-textarea" readonly onclick="this.select()"><a href="https://saivan4ick.github.io" target="_blank"><img src="http://saivan4ick.github.io/img/button_saivan.png" width="88" height="31" alt="кликни на меня!"></a></textarea>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer / Last.fm Userbar & Badges -->
+    <footer class="site-footer">
+      <a href="https://www.last.fm/user/saivan4ick" target="_blank" rel="noopener" class="userbar-link" title="Last.fm Profile">
+        <img src="img/lastfm_userbar.png" alt="Last.fm Userbar" class="lastfm-userbar">
+      </a>
+      <div class="footer-buttons">
+        <a href="https://github.com/saivan4ick" target="_blank" rel="noopener" class="badge-link" title="GitHub Profile">
+          <img src="img/github.gif" alt="GitHub" class="badge-88x31">
+        </a>
+        <span class="badge-link" title="Made with Windows">
+          <img src="img/made_with_windows.gif" alt="Made with Windows" class="badge-88x31">
+        </span>
+      </div>
+    </footer>
+  </div>
+
+</body>
+</html>
