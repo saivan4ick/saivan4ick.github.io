@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>мой сервер</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+25&family=Krona+One&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .terminal-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      color: #e0e0e0;
+      padding: 30px;
+      border-radius: 16px;
+      font-family: 'Fira Code', 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.4;
+      overflow-x: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      min-height: 400px;
+      text-align: left;
+      width: 100%;
+      max-width: 100%;
+    }
+    .terminal-section pre {
+      margin: 0;
+      font-family: inherit;
+      white-space: pre;
+    }
+    .prompt { color: #8ae234; }
+    .prompt-path { color: #729fcf; }
+    .typewriter-text { 
+      border-right: 2px solid #e0e0e0; 
+      animation: blink 1s step-end infinite; 
+    }
+    @keyframes blink { 
+      50% { border-color: transparent; } 
+    }
+    .server-logo { 
+      width: 250px; 
+      height: auto; 
+      border-radius: 8px; 
+      object-fit: contain; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .fetch-layout {
+      display: flex;
+      flex-direction: row;
+      gap: 30px;
+      align-items: flex-start;
+      flex-wrap: nowrap;
+    }
+    .info-panel {
+      min-width: max-content;
+    }
+    .info-labels { color: #e0e0e0; font-weight: bold; }
+    .info-title { color: #ef2929; font-weight: bold; }
+    .color-blocks { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
+    .color-row { display: flex; }
+    .color-block { width: 24px; height: 16px; }
+  </style>
+</head>
+<body>
+  <iframe id="bg-iframe" src="background.html" title="Background Animation"></iframe>
+
+  <div class="container">
+
+    <header class="site-header">
+      <a href="index.html" class="back-link">&larr; на главную</a>
+      <h1 class="logo" style="color: inherit; text-decoration: none;">мой сервер</h1>
+      <p class="bio">
+        тут можно посмотреть информацию о моем сервере
+      </p>
+    </header>
+
+    <main class="content-sections">
+      
+      <section class="section-block" style="width: 100%;">
+        <div class="terminal-section" id="terminal">
+          <div><span class="prompt">saivan@x96q-4k</span>:<span class="prompt-path">~</span>$ <span id="typewriter" class="typewriter-text"></span></div>
+          
+          <div id="fetch-output" style="display: none; margin-top: 10px;">
+            <div class="fetch-layout">
+              <img src="img/server.JPG" alt="Server Image" class="server-logo">
+
+              <div class="info-panel">
+                <div class="info-title">saivan@x96q-4k</div>
+                <div>------------------</div>
+                <div><span class="info-labels">OS:</span> Armbian-unofficial 26.02.0-trunk bookworm aarch64</div>
+                <div><span class="info-labels">Host:</span> hechuang,x96-q DDR3L v5.1</div>
+                <div><span class="info-labels">Uptime:</span> достаточно</div>
+                <div><span class="info-labels">CPU:</span> sun50i-h616 (4)</div>
+                <div><span class="info-labels">GPU:</span> Allwinner sun50i-h616-mali [Integrated]</div>
+                <div><span class="info-labels">Memory:</span> 766.58 MiB / 1.94 GiB (<span style="color:#8ae234;">39%</span>)</div>
+                <div><span class="info-labels">Swap:</span> 7.13 MiB / 990.91 MiB (<span style="color:#8ae234;">1%</span>)</div>
+                <div><span class="info-labels">Locale:</span> en_US.UTF-8</div>
+                
+                <div class="color-blocks">
+                  <div class="color-row">
+                    <div class="color-block" style="background-color:#000000;"></div>
+                    <div class="color-block" style="background-color:#cc0000;"></div>
+                    <div class="color-block" style="background-color:#4e9a06;"></div>
+                    <div class="color-block" style="background-color:#c4a000;"></div>
+                    <div class="color-block" style="background-color:#3465a4;"></div>
+                    <div class="color-block" style="background-color:#75507b;"></div>
+                    <div class="color-block" style="background-color:#06989a;"></div>
+                    <div class="color-block" style="background-color:#d3d7cf;"></div>
+                  </div>
+                  <div class="color-row">
+                    <div class="color-block" style="background-color:#555753;"></div>
+                    <div class="color-block" style="background-color:#ef2929;"></div>
+                    <div class="color-block" style="background-color:#8ae234;"></div>
+                    <div class="color-block" style="background-color:#fce94f;"></div>
+                    <div class="color-block" style="background-color:#729fcf;"></div>
+                    <div class="color-block" style="background-color:#ad7fa8;"></div>
+                    <div class="color-block" style="background-color:#34e2e2;"></div>
+                    <div class="color-block" style="background-color:#eeeeec;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 10px;">
+              <span class="prompt">saivan@x96q-4k</span>:<span class="prompt-path">~</span>$ <span class="typewriter-text" id="cursor2" style="display: none;"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const textToType = "fastfetch";
+    const typewriterElement = document.getElementById("typewriter");
+    const fetchOutputElement = document.getElementById("fetch-output");
+    const cursor2 = document.getElementById("cursor2");
+    
+    let i = 0;
+    function typeWriter() {
+      if (i < textToType.length) {
+        typewriterElement.textContent += textToType.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+      } else {
+        setTimeout(() => {
+          typewriterElement.classList.remove('typewriter-text');
+          fetchOutputElement.style.display = "block";
+          cursor2.style.display = "inline";
+        }, 200);
+      }
+    }
+    
+    // Start animation shortly after load
+    setTimeout(typeWriter, 800);
+  </script>
+</body>
+</html>
+

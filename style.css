@@ -1,15 +1,8 @@
-/* ==========================================================================
-   Saivan Site Stylesheet - Restored & Optimized
-   Fonts: Inter, Krona One, Jersey 25
-   ========================================================================== */
 
-/* Design Tokens */
 :root {
   --bg-color: #161616;
   --text-main: #ffffff;
-  --text-muted: #dedede; /* Светло-серый (серо-белый) */
-  --text-sub: #c8c8c8;   /* Подзаголовки серо-белые */
-  --accent-blue: #8ba0ff;
+  --text-muted: #dedede;  --text-sub: #c8c8c8;  --accent-blue: #8ba0ff;
   --accent-blue-hover: #b8c8ff;
   
   --font-krona: 'Krona One', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -20,14 +13,12 @@
   --card-border: rgba(255, 255, 255, 0.12);
 }
 
-/* Base resets */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Background Iframe */
 #bg-iframe {
   position: fixed;
   top: 0;
@@ -54,10 +45,9 @@ html, body {
   padding: 60px 20px;
 }
 
-/* Page Layout Container */
 .container {
   width: 100%;
-  max-width: 760px;
+  max-width: 950px;
   margin: 0 auto;
   text-align: center;
   display: flex;
@@ -65,7 +55,6 @@ html, body {
   align-items: center;
 }
 
-/* Header Section */
 .site-header {
   margin-bottom: 70px;
   display: flex;
@@ -114,7 +103,6 @@ html, body {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* Content Sections */
 .content-sections {
   width: 100%;
   display: flex;
@@ -140,7 +128,6 @@ html, body {
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
-/* Item Group & Links */
 .item-group {
   display: flex;
   flex-direction: column;
@@ -189,7 +176,6 @@ html, body {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
-/* Contact link style */
 .contact-link {
   font-family: var(--font-inter);
   font-size: 15px;
@@ -209,7 +195,6 @@ html, body {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Modal Overlay & Card */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -318,7 +303,6 @@ html, body {
   margin-top: 2px;
 }
 
-/* Toast notification */
 .toast {
   position: fixed;
   bottom: 30px;
@@ -342,7 +326,6 @@ html, body {
   opacity: 1;
 }
 
-/* Back Link */
 .back-link {
   font-family: var(--font-inter);
   font-size: 14px;
@@ -359,7 +342,6 @@ html, body {
   transform: translateX(-3px);
 }
 
-/* Donate Page Grid & Cards */
 .donate-grid {
   width: 100%;
   max-width: 600px;
@@ -435,7 +417,6 @@ html, body {
   transform: translateX(3px);
 }
 
-/* Glowing Social Icons Row */
 .social-icons-row {
   display: flex;
   align-items: center;
@@ -487,7 +468,6 @@ html, body {
   transform: translateY(-3px) scale(1.08);
 }
 
-/* Footer Last.fm Userbar & 88x31 Badges */
 .site-footer {
   margin-top: 65px;
   display: flex;
@@ -586,7 +566,6 @@ html, body {
   background: rgba(0, 0, 0, 0.65);
 }
 
-/* Media Queries */
 @media (max-width: 600px) {
   body {
     padding: 40px 16px;
@@ -610,3 +589,4 @@ html, body {
     align-self: flex-start;
   }
 }
+
