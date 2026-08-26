@@ -1,233 +1,429 @@
 <!DOCTYPE html>
-<html lang="eu">
+<html lang="ru">
 <head>
-	<meta charset="utf-8">
-	<title>Snake Game</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"> 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-<link href="https://fonts.googleapis.com/css2?family=Radio+Canada&display=swap" rel="stylesheet">
-</head>
-<body>
-  <h1 align="center">The legendary snake game is revived and modified</h1>
-  <p align="center">Play snake if standard games are not allowed on your school or work computer</p>
-	<canvas id="mc" width="1280" height="720"></canvas>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
   <style>
-  html, body {padding: 0;margin: 0;}
-    * {box-sizing: border-box;}
-    body {background: #ddd; padding: 50px;}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #06080c;
+    }
     canvas {
-        background: black;
-        margin: 0 auto;
       display: block;
+      width: 100%;
+      height: 100%;
+      background: #06080c;
     }
   </style>
+</head>
+<body>
+  <canvas id="mc"></canvas>
 
-  <script>window.onload = function() {
-  document.addEventListener('keydown', changeDirection);
-  setInterval(loop, 1000/60); // 60 FPS
-}
+  <script>
+    const canv = document.getElementById('mc');
+    const ctx = canv.getContext('2d');
 
-var
-  canv        = document.getElementById('mc'), // canvas
-  ctx         = canv.getContext('2d'), // 2d context
-  gs = fkp      = false, // game started && first key pressed (initialization states)
-  speed = baseSpeed   = 3, // snake movement speed
-  xv = yv       = 0, // velocity (x & y)
-  px          = ~~(canv.width) / 2, // player X position
-  py          = ~~(canv.height) / 2, // player Y position
-  pw = ph       = 20, // player size
-  aw = ah       = 20, // apple size
-  apples        = [], // apples list
-  trail       = [], // tail elements list (aka trail)
-  tail        = 100, // tail size (1 for 10)
-  tailSafeZone    = 20, // self eating protection for head zone (aka safeZone)
-  cooldown      = false, // is key in cooldown mode
-  score       = 0; // current score
+    let fkp = false;
+    let dir = { x: 0, y: 0 };
+    let inputQueue = [];
 
-// game main loop
-function loop()
-{
-  // logic
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canv.width, canv.height);
+    const baseSpeed = 4;
+    let speed = baseSpeed;
+    let px = 0;
+    let py = 0;
+    const pw = 20;
+    const segRadius = 10;
 
-  // force speed
-  px += xv;
-  py += yv;
+    let apples = [];
+    let trail = [];
+    let currentTail = 100;
+    let targetTail = 100;
+    const minTail = 25;
+    let isBurning = false;
+    let invulnerableTimer = 0;
+    let particles = [];
 
-  // teleports
-  if( px > canv.width )
-    {px = 0;}
+    function resizeCanvas() {
+      const oldW = canv.width || window.innerWidth;
+      const oldH = canv.height || window.innerHeight;
 
-  if( px + pw < 0 )
-    {px = canv.width;}
+      canv.width = window.innerWidth;
+      canv.height = window.innerHeight;
 
-  if( py + ph < 0 )
-    {py = canv.height;}
+      if (!fkp) {
+        px = Math.floor(canv.width / 2);
+        py = Math.floor(canv.height / 2);
+      } else if (oldW && oldH) {
+        px = (px / oldW) * canv.width;
+        py = (py / oldH) * canv.height;
+      }
+    }
 
-  if( py > canv.height )
-    {py = 0;}
+    function init() {
+      resizeCanvas();
+      document.addEventListener('keydown', handleKeyDown);
+      requestAnimationFrame(gameLoop);
+    }
 
-  // paint the snake itself with the tail elements
-  ctx.fillStyle = 'lime';
-  for( var i = 0; i < trail.length; i++ )
-  {
-    ctx.fillStyle = trail[i].color || 'lime';
-    ctx.fillRect(trail[i].x, trail[i].y, pw, ph);
-  }
+    window.addEventListener('resize', resizeCanvas);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
 
-  trail.push({x: px, y: py, color: ctx.fillStyle});
+    // Input handler with queue for responsive turns
+    function handleKeyDown(evt) {
+      const key = evt.key ? evt.key.toLowerCase() : '';
+      const code = evt.code || '';
 
-  // limiter
-  if( trail.length > tail )
-  {
-    trail.shift();
-  }
+      let requestedDir = null;
 
-  // eaten
-  if( trail.length > tail )
-  {
-    trail.shift();
-  }
+      if (code === 'KeyA' || code === 'ArrowLeft' || key === 'a' || key === 'ф' || key === 'arrowleft') {
+        requestedDir = { x: -1, y: 0 };
+      } else if (code === 'KeyW' || code === 'ArrowUp' || key === 'w' || key === 'ц' || key === 'arrowup') {
+        requestedDir = { x: 0, y: -1 };
+      } else if (code === 'KeyD' || code === 'ArrowRight' || key === 'd' || key === 'в' || key === 'arrowright') {
+        requestedDir = { x: 1, y: 0 };
+      } else if (code === 'KeyS' || code === 'ArrowDown' || key === 's' || key === 'ы' || key === 'arrowdown') {
+        requestedDir = { x: 0, y: 1 };
+      }
 
-  // self collisions
-  if( trail.length >= tail && gs )
-  {
-    for( var i = trail.length - tailSafeZone; i >= 0; i-- )
-    {
-      if(
-        px < (trail[i].x + pw)
-        && px + pw > trail[i].x
-        && py < (trail[i].y + ph)
-        && py + ph > trail[i].y
-      )
-      {
-        // got collision
-        tail = 10; // cut the tail
-        speed = baseSpeed; // cut the speed (flash nomore lol xD)
+      if (requestedDir) {
+        evt.preventDefault();
 
-        for( var t = 0; t < trail.length; t++ )
-        {
-          // highlight lossed area
-          trail[t].color = 'red';
+        if (!fkp) {
+          fkp = true;
+          dir = requestedDir;
+          spawnApple();
+          return;
+        }
 
-          if( t >= trail.length - tail )
-            {break;}
+        if (inputQueue.length < 2) {
+          const lastPlanned = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : dir;
+          // Prevent 180-degree instant reversal into own neck
+          if (requestedDir.x !== -lastPlanned.x || requestedDir.y !== -lastPlanned.y) {
+            if (requestedDir.x !== lastPlanned.x || requestedDir.y !== lastPlanned.y) {
+              inputQueue.push(requestedDir);
+            }
+          }
         }
       }
     }
-  }
 
-  // paint apples
-  for( var a = 0; a < apples.length; a++ )
-  {
-    ctx.fillStyle = apples[a].color;
-    ctx.fillRect(apples[a].x, apples[a].y, aw, ah);
-  }
+    let lastTime = performance.now();
+    let accumulator = 0;
+    const TICK_RATE = 1000 / 60; // 60 updates/sec
 
-  // check for snake head collisions with apples
-  for( var a = 0; a < apples.length; a++ )
-  {
-    if(
-      px < (apples[a].x + pw)
-      && px + pw > apples[a].x
-      && py < (apples[a].y + ph)
-      && py + ph > apples[a].y
-    )
-    {
-      // got collision with apple
-      apples.splice(a, 1); // remove this apple from the apples list
-      tail += 10; // add tail length
-      speed += .1; // add some speed
-      spawnApple(); // spawn another apple(-s)
-      break;
+    function gameLoop(now) {
+      let delta = now - lastTime;
+      lastTime = now;
+      if (delta > 250) delta = 250;
+      accumulator += delta;
+
+      while (accumulator >= TICK_RATE) {
+        update();
+        accumulator -= TICK_RATE;
+      }
+
+      render();
+      requestAnimationFrame(gameLoop);
     }
-  }
-}
 
-// apples spawner
-function spawnApple()
-{
-  var
-    newApple = {
-      x: ~~(Math.random() * canv.width),
-      y: ~~(Math.random() * canv.height),
-      color: 'red'
-    };
+    function update() {
+      if (!fkp) return;
 
-  // forbid to spawn near the edges
-  if(
-    (newApple.x < aw || newApple.x > canv.width - aw)
-    ||
-    (newApple.y < ah || newApple.y > canv.height - ah)
-  )
-  {
-    spawnApple();
-    return;
-  }
+      // Process input queue
+      if (inputQueue.length > 0) {
+        const next = inputQueue.shift();
+        if (next.x !== -dir.x || next.y !== -dir.y) {
+          dir = next;
+        }
+      }
 
-  // check for collisions with tail element, so no apple will be spawned in it
-  for( var i = 0; i < tail.length; i++ )
-  {
-    if(
-      newApple.x < (trail[i].x + pw)
-      && newApple.x + aw > trail[i].x
-      && newApple.y < (trail[i].y + ph)
-      && newApple.y + ah > trail[i].y
-    )
-    {
-      // got collision
-      spawnApple();
-      return;
+      // Move player head
+      px += dir.x * speed;
+      py += dir.y * speed;
+
+      // Screen boundary wrapping (teleport)
+      if (px > canv.width) px = 0;
+      if (px < 0) px = canv.width;
+      if (py > canv.height) py = 0;
+      if (py < 0) py = canv.height;
+
+      // Store trail point
+      trail.push({
+        x: px,
+        y: py,
+        burn: isBurning ? 1 : 0
+      });
+
+      // Smooth tail length adjustment
+      if (currentTail > targetTail) {
+        currentTail = Math.max(targetTail, currentTail - 1.2);
+        if (currentTail <= targetTail) {
+          isBurning = false;
+        }
+      } else if (currentTail < targetTail) {
+        currentTail = Math.min(targetTail, currentTail + 0.8);
+      }
+
+      if (invulnerableTimer > 0) {
+        invulnerableTimer--;
+      }
+
+      // Remove excess trail points and spawn burning particles
+      while (trail.length > Math.floor(currentTail)) {
+        const removed = trail.shift();
+        if (isBurning || removed.burn > 0) {
+          if (Math.random() < 0.6) {
+            particles.push({
+              x: removed.x + (Math.random() * 12 - 6),
+              y: removed.y + (Math.random() * 12 - 6),
+              vx: (Math.random() - 0.5) * 1.5,
+              vy: (Math.random() - 0.5) * 1.5,
+              radius: Math.random() * 3 + 2,
+              alpha: 1,
+              decay: Math.random() * 0.04 + 0.03,
+              color: Math.random() > 0.4 ? '#ff2b42' : '#ff7a18'
+            });
+          }
+        }
+      }
+
+      // Update particles
+      for (let p = particles.length - 1; p >= 0; p--) {
+        const pt = particles[p];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= pt.decay;
+        if (pt.alpha <= 0) {
+          particles.splice(p, 1);
+        }
+      }
+
+      // Reliable Self-Collision Detection
+      const safeSegments = Math.ceil(pw / speed) + 3;
+      if (trail.length > safeSegments + 5 && invulnerableTimer <= 0) {
+        const hx = px;
+        const hy = py;
+        const hitDistSq = (segRadius * 1.3) * (segRadius * 1.3);
+
+        for (let i = trail.length - safeSegments; i >= 0; i--) {
+          const seg = trail[i];
+          let dx = Math.abs(hx - seg.x);
+          let dy = Math.abs(hy - seg.y);
+
+          if (dx > canv.width / 2) dx = canv.width - dx;
+          if (dy > canv.height / 2) dy = canv.height - dy;
+
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < hitDistSq) {
+            const remainingBody = trail.length - i;
+            targetTail = Math.max(minTail, Math.min(remainingBody, 40));
+            isBurning = true;
+            invulnerableTimer = 35;
+            speed = baseSpeed;
+
+            const burnCutoff = Math.max(0, trail.length - Math.floor(targetTail));
+            for (let b = 0; b < burnCutoff; b++) {
+              trail[b].burn = 1;
+            }
+
+            for (let k = 0; k < 12; k++) {
+              particles.push({
+                x: hx + (Math.random() * 16 - 8),
+                y: hy + (Math.random() * 16 - 8),
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                radius: Math.random() * 4 + 2,
+                alpha: 1,
+                decay: Math.random() * 0.03 + 0.02,
+                color: Math.random() > 0.5 ? '#ff1744' : '#ff9100'
+              });
+            }
+            break;
+          }
+        }
+      }
+
+      // Apple Collisions
+      const appleRadiusSq = (segRadius + 8) * (segRadius + 8);
+      for (let a = apples.length - 1; a >= 0; a--) {
+        const apple = apples[a];
+        let dx = Math.abs(px - apple.x);
+        let dy = Math.abs(py - apple.y);
+        if (dx > canv.width / 2) dx = canv.width - dx;
+        if (dy > canv.height / 2) dy = canv.height - dy;
+
+        if (dx * dx + dy * dy < appleRadiusSq) {
+          apples.splice(a, 1);
+          targetTail += 18;
+          speed = Math.min(speed + 0.1, 7.5);
+          spawnApple();
+
+          for (let k = 0; k < 8; k++) {
+            particles.push({
+              x: apple.x,
+              y: apple.y,
+              vx: (Math.random() - 0.5) * 3,
+              vy: (Math.random() - 0.5) * 3,
+              radius: Math.random() * 3 + 1.5,
+              alpha: 1,
+              decay: 0.04,
+              color: '#39ff14'
+            });
+          }
+        }
+      }
     }
-  }
 
-  apples.push(newApple);
+    // Apples spawner
+    function spawnApple() {
+      const margin = 50;
+      const spawnW = Math.max(canv.width - margin * 2, 100);
+      const spawnH = Math.max(canv.height - margin * 2, 100);
 
-  if( apples.length < 3 && ~~(Math.random() * 1000) > 700 )
-  {
-    // 30% chance to spawn one more apple
-    spawnApple();
-  }
-}
+      const newApple = {
+        x: Math.floor(Math.random() * spawnW) + margin,
+        y: Math.floor(Math.random() * spawnH) + margin
+      };
 
-// random color generator (for debugging purpose or just 4fun)
-function rc()
-{
-  return '#' + ((~~(Math.random() * 255)).toString(16)) + ((~~(Math.random() * 255)).toString(16)) + ((~~(Math.random() * 255)).toString(16));
-}
+      for (let i = 0; i < trail.length; i += 3) {
+        const seg = trail[i];
+        const dist = Math.hypot(newApple.x - seg.x, newApple.y - seg.y);
+        if (dist < 35) {
+          spawnApple();
+          return;
+        }
+      }
 
-// velocity changer (controls)
-function changeDirection(evt)
-{
-  if( !fkp && [37,38,39,40].indexOf(evt.keyCode) > -1 )
-  {
-    setTimeout(function() {gs = true;}, 1000);
-    fkp = true;
-    spawnApple();
-  }
+      apples.push(newApple);
 
-  if( cooldown )
-    {return false;}
+      if (apples.length < 3 && Math.random() > 0.65) {
+        spawnApple();
+      }
+    }
 
-  /*
-    4 directional movement.
-   */
-  if( evt.keyCode == 37 && !(xv > 0) ) // left arrow
-    {xv = -speed; yv = 0;}
+    // Render loop
+    function render() {
+      ctx.fillStyle = '#06080c';
+      ctx.fillRect(0, 0, canv.width, canv.height);
 
-  if( evt.keyCode == 38 && !(yv > 0) ) // top arrow
-    {xv = 0; yv = -speed;}
+      // Subtle ambient grid
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+      ctx.lineWidth = 1;
+      const gridSize = 40;
+      ctx.beginPath();
+      for (let x = 0; x < canv.width; x += gridSize) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canv.height);
+      }
+      for (let y = 0; y < canv.height; y += gridSize) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(canv.width, y);
+      }
+      ctx.stroke();
 
-  if( evt.keyCode == 39 && !(xv < 0) ) // right arrow
-    {xv = speed; yv = 0;}
+      // Render Particles
+      for (let p = 0; p < particles.length; p++) {
+        const pt = particles[p];
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pt.alpha);
+        ctx.fillStyle = pt.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = pt.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
 
-  if( evt.keyCode == 40 && !(yv < 0) ) // down arrow
-    {xv = 0; yv = speed;}
+      // Render Apples
+      const pulse = Math.sin(performance.now() * 0.006) * 1.5;
+      for (let a = 0; a < apples.length; a++) {
+        const ap = apples[a];
+        ctx.save();
+        ctx.shadowBlur = 15 + pulse * 2;
+        ctx.shadowColor = '#ff2442';
 
-  cooldown = true;
-  setTimeout(function() {cooldown = false;}, 100);
-}</script>
-<h1 align="center">Only green and red and with 60 FPS</h1>
+        ctx.fillStyle = '#ff2442';
+        ctx.beginPath();
+        ctx.arc(ap.x, ap.y, 9 + pulse * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#39ff14';
+        ctx.beginPath();
+        ctx.arc(ap.x + 2, ap.y - 8, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // Render Snake Body
+      const trailLen = trail.length;
+      const excessCount = Math.max(0, trailLen - Math.floor(targetTail));
+
+      for (let i = 0; i < trailLen; i++) {
+        const seg = trail[i];
+        const isBurningSeg = isBurning && (i < excessCount || seg.burn > 0);
+
+        ctx.save();
+        if (isBurningSeg) {
+          const burnFade = Math.min(1, (excessCount - i) / 20);
+          ctx.fillStyle = i % 2 === 0 ? '#ff1744' : '#ff6d00';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#ff1744';
+          ctx.beginPath();
+          ctx.arc(seg.x, seg.y, segRadius * (0.8 + 0.2 * (1 - burnFade)), 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#39ff14';
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = 'rgba(57, 255, 20, 0.4)';
+          ctx.beginPath();
+          ctx.arc(seg.x, seg.y, segRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // Render Snake Head with Eyes
+      if (trailLen > 0 || !fkp) {
+        ctx.save();
+        ctx.fillStyle = '#52ff33';
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = '#39ff14';
+        ctx.beginPath();
+        ctx.arc(px, py, segRadius + 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (fkp && (dir.x !== 0 || dir.y !== 0)) {
+          ctx.fillStyle = '#000';
+          const eyeDist = 4;
+          const eyeForward = 5;
+          const ex1 = px + dir.x * eyeForward - dir.y * eyeDist;
+          const ey1 = py + dir.y * eyeForward + dir.x * eyeDist;
+          const ex2 = px + dir.x * eyeForward + dir.y * eyeDist;
+          const ey2 = py + dir.y * eyeForward - dir.x * eyeDist;
+
+          ctx.beginPath();
+          ctx.arc(ex1, ey1, 2.2, 0, Math.PI * 2);
+          ctx.arc(ex2, ey2, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+  </script>
 </body>
+</html>
