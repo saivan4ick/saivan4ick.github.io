@@ -31,39 +31,74 @@
     const canv = document.getElementById('mc');
     const ctx = canv.getContext('2d');
 
-    let fkp = false;
-    let dir = { x: 0, y: 0 };
+    const CELL_SIZE = 26;
+    let cols = 0;
+    let rows = 0;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    let gameStarted = false;
+    let dir = { x: 1, y: 0 };
     let inputQueue = [];
 
-    const baseSpeed = 4;
+    // Head position in floating-point grid coordinates
+    let headX = 0;
+    let headY = 0;
+    let pathHistory = []; // [{x, y}]
+
+    const baseSpeed = 7.5; // Grid cells per second
     let speed = baseSpeed;
-    let px = 0;
-    let py = 0;
-    const pw = 20;
-    const segRadius = 10;
 
     let apples = [];
-    let trail = [];
-    let currentTail = 100;
-    let targetTail = 100;
-    const minTail = 25;
+    let currentLength = 6.0;
+    let targetLength = 6.0;
+    const minLength = 3.0;
     let isBurning = false;
     let invulnerableTimer = 0;
     let particles = [];
 
-    function resizeCanvas() {
-      const oldW = canv.width || window.innerWidth;
-      const oldH = canv.height || window.innerHeight;
+    function initSnake() {
+      cols = Math.floor(canv.width / CELL_SIZE) || 20;
+      rows = Math.floor(canv.height / CELL_SIZE) || 20;
 
+      headX = Math.floor(cols / 2);
+      headY = Math.floor(rows / 2);
+
+      dir = { x: 1, y: 0 };
+      inputQueue = [];
+      pathHistory = [];
+
+      currentLength = 6.0;
+      targetLength = 6.0;
+      speed = baseSpeed;
+      isBurning = false;
+      invulnerableTimer = 0;
+
+      // Seed initial straight path history behind head
+      const stepCount = 120;
+      for (let i = 0; i <= stepCount; i++) {
+        const dist = (i / stepCount) * currentLength;
+        pathHistory.push({
+          x: (headX - dist + cols) % cols,
+          y: headY
+        });
+      }
+    }
+
+    function resizeCanvas() {
       canv.width = window.innerWidth;
       canv.height = window.innerHeight;
 
-      if (!fkp) {
-        px = Math.floor(canv.width / 2);
-        py = Math.floor(canv.height / 2);
-      } else if (oldW && oldH) {
-        px = (px / oldW) * canv.width;
-        py = (py / oldH) * canv.height;
+      cols = Math.floor(canv.width / CELL_SIZE);
+      rows = Math.floor(canv.height / CELL_SIZE);
+
+      offsetX = Math.floor((canv.width - cols * CELL_SIZE) / 2);
+      offsetY = Math.floor((canv.height - rows * CELL_SIZE) / 2);
+
+      if (!gameStarted) {
+        initSnake();
+        apples = [];
+        spawnApple();
       }
     }
 
@@ -80,7 +115,7 @@
       init();
     }
 
-    // Input handler with queue for responsive turns
+    // Input handler with queue for sharp, responsive grid turns
     function handleKeyDown(evt) {
       const key = evt.key ? evt.key.toLowerCase() : '';
       const code = evt.code || '';
@@ -100,10 +135,9 @@
       if (requestedDir) {
         evt.preventDefault();
 
-        if (!fkp) {
-          fkp = true;
+        if (!gameStarted) {
+          gameStarted = true;
           dir = requestedDir;
-          spawnApple();
           return;
         }
 
@@ -119,84 +153,75 @@
       }
     }
 
-    let lastTime = performance.now();
-    let accumulator = 0;
-    const TICK_RATE = 1000 / 60; // 60 updates/sec
-
-    function gameLoop(now) {
-      let delta = now - lastTime;
-      lastTime = now;
-      if (delta > 250) delta = 250;
-      accumulator += delta;
-
-      while (accumulator >= TICK_RATE) {
-        update();
-        accumulator -= TICK_RATE;
-      }
-
-      render();
-      requestAnimationFrame(gameLoop);
+    // Distance calculation across toroidal wrapped grid
+    function getStepDist(p1, p2) {
+      let dx = p1.x - p2.x;
+      let dy = p1.y - p2.y;
+      if (dx > cols / 2) dx -= cols;
+      if (dx < -cols / 2) dx += cols;
+      if (dy > rows / 2) dy -= rows;
+      if (dy < -rows / 2) dy += rows;
+      return Math.hypot(dx, dy);
     }
 
-    function update() {
-      if (!fkp) return;
+    // Sample body segment coordinates along the historical path
+    function getSegmentPositions(totalLen) {
+      const segments = [];
+      if (pathHistory.length === 0) return segments;
 
-      // Process input queue
-      if (inputQueue.length > 0) {
-        const next = inputQueue.shift();
-        if (next.x !== -dir.x || next.y !== -dir.y) {
-          dir = next;
+      segments.push({ x: pathHistory[0].x, y: pathHistory[0].y, dist: 0 });
+
+      let currentDist = 0;
+      let segIndex = 1;
+      const segSpacing = 1.0; // exactly 1 grid cell apart
+
+      for (let i = 0; i < pathHistory.length - 1; i++) {
+        const p1 = pathHistory[i];
+        const p2 = pathHistory[i + 1];
+        const d = getStepDist(p1, p2);
+
+        while (currentDist + d >= segIndex * segSpacing && segIndex < totalLen) {
+          const needed = segIndex * segSpacing - currentDist;
+          const t = d > 0 ? needed / d : 0;
+
+          let dx = p2.x - p1.x;
+          let dy = p2.y - p1.y;
+          if (dx > cols / 2) dx -= cols;
+          if (dx < -cols / 2) dx += cols;
+          if (dy > rows / 2) dy -= rows;
+          if (dy < -rows / 2) dy += rows;
+
+          let gx = (p1.x + dx * t + cols) % cols;
+          let gy = (p1.y + dy * t + rows) % rows;
+
+          segments.push({ x: gx, y: gy, dist: segIndex * segSpacing });
+          segIndex++;
         }
+
+        currentDist += d;
+        if (segIndex >= totalLen) break;
       }
 
-      // Move player head
-      px += dir.x * speed;
-      py += dir.y * speed;
+      return segments;
+    }
 
-      // Screen boundary wrapping (teleport)
-      if (px > canv.width) px = 0;
-      if (px < 0) px = canv.width;
-      if (py > canv.height) py = 0;
-      if (py < 0) py = canv.height;
+    // Convert grid coordinates to canvas pixel position
+    function getScreenPos(pt) {
+      return {
+        x: offsetX + pt.x * CELL_SIZE + CELL_SIZE / 2,
+        y: offsetY + pt.y * CELL_SIZE + CELL_SIZE / 2
+      };
+    }
 
-      // Store trail point
-      trail.push({
-        x: px,
-        y: py,
-        burn: isBurning ? 1 : 0
-      });
+    let lastTime = performance.now();
 
-      // Smooth tail length adjustment
-      if (currentTail > targetTail) {
-        currentTail = Math.max(targetTail, currentTail - 1.2);
-        if (currentTail <= targetTail) {
-          isBurning = false;
-        }
-      } else if (currentTail < targetTail) {
-        currentTail = Math.min(targetTail, currentTail + 0.8);
-      }
+    function gameLoop(now) {
+      let dt = (now - lastTime) / 1000;
+      lastTime = now;
+      if (dt > 0.1) dt = 0.1; // Clamp large delta
 
-      if (invulnerableTimer > 0) {
-        invulnerableTimer--;
-      }
-
-      // Remove excess trail points and spawn burning particles
-      while (trail.length > Math.floor(currentTail)) {
-        const removed = trail.shift();
-        if (isBurning || removed.burn > 0) {
-          if (Math.random() < 0.6) {
-            particles.push({
-              x: removed.x + (Math.random() * 12 - 6),
-              y: removed.y + (Math.random() * 12 - 6),
-              vx: (Math.random() - 0.5) * 1.5,
-              vy: (Math.random() - 0.5) * 1.5,
-              radius: Math.random() * 3 + 2,
-              alpha: 1,
-              decay: Math.random() * 0.04 + 0.03,
-              color: Math.random() > 0.4 ? '#ff2b42' : '#ff7a18'
-            });
-          }
-        }
+      if (gameStarted) {
+        update(dt);
       }
 
       // Update particles
@@ -210,41 +235,125 @@
         }
       }
 
-      // Reliable Self-Collision Detection
-      const safeSegments = Math.ceil(pw / speed) + 3;
-      if (trail.length > safeSegments + 5 && invulnerableTimer <= 0) {
-        const hx = px;
-        const hy = py;
-        const hitDistSq = (segRadius * 1.3) * (segRadius * 1.3);
+      render();
+      requestAnimationFrame(gameLoop);
+    }
 
-        for (let i = trail.length - safeSegments; i >= 0; i--) {
-          const seg = trail[i];
-          let dx = Math.abs(hx - seg.x);
-          let dy = Math.abs(hy - seg.y);
+    function update(dt) {
+      let moveDist = speed * dt;
 
-          if (dx > canv.width / 2) dx = canv.width - dx;
-          if (dy > canv.height / 2) dy = canv.height - dy;
+      // Handle sharp grid intersection turning
+      while (moveDist > 0.0001) {
+        let turned = false;
 
-          const distSq = dx * dx + dy * dy;
+        if (inputQueue.length > 0) {
+          const queuedDir = inputQueue[0];
 
-          if (distSq < hitDistSq) {
-            const remainingBody = trail.length - i;
-            targetTail = Math.max(minTail, Math.min(remainingBody, 40));
+          if (dir.x !== 0 && queuedDir.y !== 0) {
+            const targetX = dir.x > 0 ? Math.ceil(headX - 0.0001) : Math.floor(headX + 0.0001);
+            let distToTarget = Math.abs(targetX - headX);
+            if (distToTarget < 0.00001) distToTarget = 0;
+
+            if (moveDist >= distToTarget) {
+              headX = (targetX + cols) % cols;
+              pathHistory.unshift({ x: headX, y: headY });
+              dir = inputQueue.shift();
+              moveDist -= distToTarget;
+              turned = true;
+            }
+          } else if (dir.y !== 0 && queuedDir.x !== 0) {
+            const targetY = dir.y > 0 ? Math.ceil(headY - 0.0001) : Math.floor(headY + 0.0001);
+            let distToTarget = Math.abs(targetY - headY);
+            if (distToTarget < 0.00001) distToTarget = 0;
+
+            if (moveDist >= distToTarget) {
+              headY = (targetY + rows) % rows;
+              pathHistory.unshift({ x: headX, y: headY });
+              dir = inputQueue.shift();
+              moveDist -= distToTarget;
+              turned = true;
+            }
+          }
+        }
+
+        if (!turned) {
+          headX = (headX + dir.x * moveDist + cols) % cols;
+          headY = (headY + dir.y * moveDist + rows) % rows;
+          pathHistory.unshift({ x: headX, y: headY });
+          moveDist = 0;
+        }
+      }
+
+      // Smooth length adjustment
+      if (currentLength > targetLength) {
+        currentLength = Math.max(targetLength, currentLength - 5.0 * dt);
+        if (currentLength <= targetLength) {
+          isBurning = false;
+        }
+      } else if (currentLength < targetLength) {
+        currentLength = Math.min(targetLength, currentLength + 3.0 * dt);
+      }
+
+      if (invulnerableTimer > 0) {
+        invulnerableTimer -= dt;
+      }
+
+      // Trim path history to save memory and keep precise length
+      let accDist = 0;
+      let cutIndex = pathHistory.length - 1;
+      for (let i = 0; i < pathHistory.length - 1; i++) {
+        accDist += getStepDist(pathHistory[i], pathHistory[i + 1]);
+        if (accDist > currentLength + 2.0) {
+          cutIndex = i + 1;
+          break;
+        }
+      }
+      if (pathHistory.length > cutIndex + 1) {
+        pathHistory.length = cutIndex + 1;
+      }
+
+      const segments = getSegmentPositions(currentLength);
+
+      // Spawn burning tail embers
+      if (isBurning && segments.length > Math.floor(targetLength)) {
+        const tailSeg = segments[segments.length - 1];
+        const scr = getScreenPos(tailSeg);
+        if (Math.random() < 0.6) {
+          particles.push({
+            x: scr.x + (Math.random() * 10 - 5),
+            y: scr.y + (Math.random() * 10 - 5),
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            radius: Math.random() * 3 + 1.5,
+            alpha: 1,
+            decay: 0.04,
+            color: Math.random() > 0.4 ? '#ff1744' : '#ff7a18'
+          });
+        }
+      }
+
+      // Check Self-Collision against body segments (skip immediate neck)
+      if (segments.length > 4 && invulnerableTimer <= 0) {
+        for (let k = 3; k < segments.length; k++) {
+          const seg = segments[k];
+          let dx = Math.abs(headX - seg.x);
+          let dy = Math.abs(headY - seg.y);
+          if (dx > cols / 2) dx -= cols;
+          if (dy > rows / 2) dy -= rows;
+
+          if (dx * dx + dy * dy < 0.36) { // ~0.6 cell distance
+            targetLength = Math.max(minLength, k);
             isBurning = true;
-            invulnerableTimer = 35;
+            invulnerableTimer = 0.8;
             speed = baseSpeed;
 
-            const burnCutoff = Math.max(0, trail.length - Math.floor(targetTail));
-            for (let b = 0; b < burnCutoff; b++) {
-              trail[b].burn = 1;
-            }
-
-            for (let k = 0; k < 12; k++) {
+            const scr = getScreenPos(segments[0]);
+            for (let p = 0; p < 14; p++) {
               particles.push({
-                x: hx + (Math.random() * 16 - 8),
-                y: hy + (Math.random() * 16 - 8),
-                vx: (Math.random() - 0.5) * 4,
-                vy: (Math.random() - 0.5) * 4,
+                x: scr.x,
+                y: scr.y,
+                vx: (Math.random() - 0.5) * 5,
+                vy: (Math.random() - 0.5) * 5,
                 radius: Math.random() * 4 + 2,
                 alpha: 1,
                 decay: Math.random() * 0.03 + 0.02,
@@ -256,61 +365,64 @@
         }
       }
 
-      // Apple Collisions
-      const appleRadiusSq = (segRadius + 8) * (segRadius + 8);
+      // Check Apple Collisions
       for (let a = apples.length - 1; a >= 0; a--) {
-        const apple = apples[a];
-        let dx = Math.abs(px - apple.x);
-        let dy = Math.abs(py - apple.y);
-        if (dx > canv.width / 2) dx = canv.width - dx;
-        if (dy > canv.height / 2) dy = canv.height - dy;
+        const ap = apples[a];
+        let dx = Math.abs(headX - ap.x);
+        let dy = Math.abs(headY - ap.y);
+        if (dx > cols / 2) dx -= cols;
+        if (dy > rows / 2) dy -= rows;
 
-        if (dx * dx + dy * dy < appleRadiusSq) {
+        if (dx * dx + dy * dy < 0.42) {
           apples.splice(a, 1);
-          targetTail += 18;
-          speed = Math.min(speed + 0.1, 7.5);
-          spawnApple();
+          targetLength += 3.0;
+          speed = Math.min(speed + 0.15, 12.0);
 
-          for (let k = 0; k < 8; k++) {
+          const scr = getScreenPos(ap);
+          for (let p = 0; p < 10; p++) {
             particles.push({
-              x: apple.x,
-              y: apple.y,
-              vx: (Math.random() - 0.5) * 3,
-              vy: (Math.random() - 0.5) * 3,
+              x: scr.x,
+              y: scr.y,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
               radius: Math.random() * 3 + 1.5,
               alpha: 1,
               decay: 0.04,
               color: '#39ff14'
             });
           }
+
+          spawnApple();
+          break;
         }
       }
     }
 
-    // Apples spawner
+    // Spawn apple on an empty integer grid cell
     function spawnApple() {
-      const margin = 50;
-      const spawnW = Math.max(canv.width - margin * 2, 100);
-      const spawnH = Math.max(canv.height - margin * 2, 100);
+      if (cols === 0 || rows === 0) return;
 
-      const newApple = {
-        x: Math.floor(Math.random() * spawnW) + margin,
-        y: Math.floor(Math.random() * spawnH) + margin
-      };
+      const segments = getSegmentPositions(currentLength);
+      const availableCells = [];
 
-      for (let i = 0; i < trail.length; i += 3) {
-        const seg = trail[i];
-        const dist = Math.hypot(newApple.x - seg.x, newApple.y - seg.y);
-        if (dist < 35) {
-          spawnApple();
-          return;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const inBody = segments.some(s => Math.abs(s.x - c) < 0.7 && Math.abs(s.y - r) < 0.7);
+          const inApple = apples.some(ap => ap.x === c && ap.y === r);
+          if (!inBody && !inApple) {
+            availableCells.push({ x: c, y: r });
+          }
         }
       }
 
-      apples.push(newApple);
+      if (availableCells.length > 0) {
+        const chosen = availableCells[Math.floor(Math.random() * availableCells.length)];
+        apples.push(chosen);
+      }
 
-      if (apples.length < 3 && Math.random() > 0.65) {
-        spawnApple();
+      if (apples.length < 3 && Math.random() > 0.6 && availableCells.length > 1) {
+        const chosen = availableCells[Math.floor(Math.random() * availableCells.length)];
+        apples.push(chosen);
       }
     }
 
@@ -319,18 +431,19 @@
       ctx.fillStyle = '#06080c';
       ctx.fillRect(0, 0, canv.width, canv.height);
 
-      // Subtle ambient grid
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+      // Draw Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
       ctx.lineWidth = 1;
-      const gridSize = 40;
       ctx.beginPath();
-      for (let x = 0; x < canv.width; x += gridSize) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canv.height);
+      for (let c = 0; c <= cols; c++) {
+        const x = offsetX + c * CELL_SIZE;
+        ctx.moveTo(x, offsetY);
+        ctx.lineTo(x, offsetY + rows * CELL_SIZE);
       }
-      for (let y = 0; y < canv.height; y += gridSize) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(canv.width, y);
+      for (let r = 0; r <= rows; r++) {
+        const y = offsetY + r * CELL_SIZE;
+        ctx.moveTo(offsetX, y);
+        ctx.lineTo(offsetX + cols * CELL_SIZE, y);
       }
       ctx.stroke();
 
@@ -351,76 +464,100 @@
       // Render Apples
       const pulse = Math.sin(performance.now() * 0.006) * 1.5;
       for (let a = 0; a < apples.length; a++) {
-        const ap = apples[a];
+        const scr = getScreenPos(apples[a]);
+
         ctx.save();
         ctx.shadowBlur = 15 + pulse * 2;
         ctx.shadowColor = '#ff2442';
 
         ctx.fillStyle = '#ff2442';
         ctx.beginPath();
-        ctx.arc(ap.x, ap.y, 9 + pulse * 0.5, 0, Math.PI * 2);
+        ctx.arc(scr.x, scr.y, (CELL_SIZE / 2 - 3) + pulse * 0.5, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#39ff14';
         ctx.beginPath();
-        ctx.arc(ap.x + 2, ap.y - 8, 3, 0, Math.PI * 2);
+        ctx.arc(scr.x + 3, scr.y - (CELL_SIZE / 2 - 3), 3, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();
       }
 
-      // Render Snake Body
-      const trailLen = trail.length;
-      const excessCount = Math.max(0, trailLen - Math.floor(targetTail));
+      // Render Snake
+      const segments = getSegmentPositions(currentLength);
+      const segLen = segments.length;
 
-      for (let i = 0; i < trailLen; i++) {
-        const seg = trail[i];
-        const isBurningSeg = isBurning && (i < excessCount || seg.burn > 0);
+      // Draw continuous connecting smooth body ribbon
+      for (let i = 0; i < segLen - 1; i++) {
+        const p1 = getScreenPos(segments[i]);
+        const p2 = getScreenPos(segments[i + 1]);
+        const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+        if (dist < CELL_SIZE * 1.8) {
+          const isBurningSeg = isBurning && i >= Math.floor(targetLength);
+          ctx.save();
+          ctx.strokeStyle = isBurningSeg ? '#ff1744' : '#39ff14';
+          ctx.lineWidth = CELL_SIZE - 5;
+          ctx.lineCap = 'round';
+          ctx.shadowBlur = isBurningSeg ? 12 : 8;
+          ctx.shadowColor = isBurningSeg ? '#ff1744' : 'rgba(57, 255, 20, 0.5)';
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // Draw segment circular joints
+      for (let i = 0; i < segLen; i++) {
+        const scr = getScreenPos(segments[i]);
+        const isBurningSeg = isBurning && i >= Math.floor(targetLength);
 
         ctx.save();
         if (isBurningSeg) {
-          const burnFade = Math.min(1, (excessCount - i) / 20);
           ctx.fillStyle = i % 2 === 0 ? '#ff1744' : '#ff6d00';
           ctx.shadowBlur = 10;
           ctx.shadowColor = '#ff1744';
           ctx.beginPath();
-          ctx.arc(seg.x, seg.y, segRadius * (0.8 + 0.2 * (1 - burnFade)), 0, Math.PI * 2);
+          ctx.arc(scr.x, scr.y, (CELL_SIZE - 5) / 2, 0, Math.PI * 2);
           ctx.fill();
         } else {
           ctx.fillStyle = '#39ff14';
           ctx.shadowBlur = 6;
           ctx.shadowColor = 'rgba(57, 255, 20, 0.4)';
           ctx.beginPath();
-          ctx.arc(seg.x, seg.y, segRadius, 0, Math.PI * 2);
+          ctx.arc(scr.x, scr.y, (CELL_SIZE - 5) / 2, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
       }
 
-      // Render Snake Head with Eyes
-      if (trailLen > 0 || !fkp) {
+      // Draw Snake Head with Eyes
+      if (segLen > 0) {
+        const headScr = getScreenPos(segments[0]);
+
         ctx.save();
         ctx.fillStyle = '#52ff33';
         ctx.shadowBlur = 14;
         ctx.shadowColor = '#39ff14';
         ctx.beginPath();
-        ctx.arc(px, py, segRadius + 1.5, 0, Math.PI * 2);
+        ctx.arc(headScr.x, headScr.y, (CELL_SIZE - 3) / 2, 0, Math.PI * 2);
         ctx.fill();
 
-        if (fkp && (dir.x !== 0 || dir.y !== 0)) {
-          ctx.fillStyle = '#000';
-          const eyeDist = 4;
-          const eyeForward = 5;
-          const ex1 = px + dir.x * eyeForward - dir.y * eyeDist;
-          const ey1 = py + dir.y * eyeForward + dir.x * eyeDist;
-          const ex2 = px + dir.x * eyeForward + dir.y * eyeDist;
-          const ey2 = py + dir.y * eyeForward - dir.x * eyeDist;
+        // Direction-facing eyes
+        ctx.fillStyle = '#000';
+        const eyeDist = 4.5;
+        const eyeForward = 5.5;
+        const ex1 = headScr.x + dir.x * eyeForward - dir.y * eyeDist;
+        const ey1 = headScr.y + dir.y * eyeForward + dir.x * eyeDist;
+        const ex2 = headScr.x + dir.x * eyeForward + dir.y * eyeDist;
+        const ey2 = headScr.y + dir.y * eyeForward - dir.x * eyeDist;
 
-          ctx.beginPath();
-          ctx.arc(ex1, ey1, 2.2, 0, Math.PI * 2);
-          ctx.arc(ex2, ey2, 2.2, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        ctx.beginPath();
+        ctx.arc(ex1, ey1, 2.5, 0, Math.PI * 2);
+        ctx.arc(ex2, ey2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       }
     }
