@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-    <input type="color" id="favcolor" value="#813D9C">
+    <input type="color" id="favcolor" value="#0a62ad">
     <canvas id="shaderCanvas"></canvas>
 
     <script>
@@ -27,7 +27,7 @@
             alert('no gl bro');
             throw new Error('no gl bro');
         }
-        let currentColor = '#813D9C';
+        let currentColor = '#0a62ad';
         function hexToVec3(hex) {
             hex = hex.replace('#', '');
             r = parseInt(hex.substring(0, 2), 16) / 255;

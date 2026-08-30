@@ -9,62 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+25&family=Krona+One&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
-  <style>
-    .terminal-section {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--card-border);
-      color: #e0e0e0;
-      padding: 30px;
-      border-radius: 16px;
-      font-family: 'Fira Code', 'Courier New', Courier, monospace;
-      font-size: 14px;
-      line-height: 1.4;
-      overflow-x: auto;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      min-height: 400px;
-      text-align: left;
-      width: 100%;
-      max-width: 100%;
-    }
-    .terminal-section pre {
-      margin: 0;
-      font-family: inherit;
-      white-space: pre;
-    }
-    .prompt { color: #8ae234; }
-    .prompt-path { color: #729fcf; }
-    .typewriter-text { 
-      border-right: 2px solid #e0e0e0; 
-      animation: blink 1s step-end infinite; 
-    }
-    @keyframes blink { 
-      50% { border-color: transparent; } 
-    }
-    .server-logo { 
-      width: 250px; 
-      height: auto; 
-      border-radius: 8px; 
-      object-fit: contain; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      flex-shrink: 0;
-    }
-    .fetch-layout {
-      display: flex;
-      flex-direction: row;
-      gap: 30px;
-      align-items: flex-start;
-      flex-wrap: nowrap;
-    }
-    .info-panel {
-      min-width: max-content;
-    }
-    .info-labels { color: #e0e0e0; font-weight: bold; }
-    .info-title { color: #ef2929; font-weight: bold; }
-    .color-blocks { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
-    .color-row { display: flex; }
-    .color-block { width: 24px; height: 16px; }
-  </style>
 </head>
 <body>
   <iframe id="bg-iframe" src="background.html" title="Background Animation"></iframe>
@@ -82,7 +26,16 @@
     <main class="content-sections">
       
       <section class="section-block" style="width: 100%;">
-        <div class="terminal-section" id="terminal">
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot dot-close"></span>
+              <span class="dot dot-minimize"></span>
+              <span class="dot dot-maximize"></span>
+            </div>
+            <div class="terminal-title">saivan@x96q-4k:~ (ssh)</div>
+          </div>
+          <div class="terminal-section" id="terminal">
           <div><span class="prompt">saivan@x96q-4k</span>:<span class="prompt-path">~</span>$ <span id="typewriter" class="typewriter-text"></span></div>
           
           <div id="fetch-output" style="display: none; margin-top: 10px;">
@@ -130,6 +83,7 @@
             </div>
           </div>
         </div>
+      </div>
       </section>
 
     </main>
