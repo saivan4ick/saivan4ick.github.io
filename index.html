@@ -1,165 +1,114 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>сайт сайван</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="style.css?v=1.1">
+    <meta charset="utf-8">
+    <title>maybe bio about saivan</title>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Иконки для различных устройств -->
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="manifest" href="site.webmanifest">
 </head>
 <body>
-
-  <iframe id="bg-iframe" src="background.html?v=1.1" title="Background Animation"></iframe>
-
-  <div class="container">
-    
-    <header class="site-header">
-      <h1 class="logo" id="logoText">
-        <img src="img/killua.gif" alt="Killua" class="logo-gif">
-        <span>saivan</span>
-      </h1>
-      <p class="bio">
-        Привет, я <b>Вася</b>. Программирую что то, снимаю, живу. Я из 🇧🇾 <b>Беларуси</b>.<br>
-        Я говорю и понимаю 🇷🇺 прекрасно, 🇧🇾 родной, 🇺🇸 около A2
-      </p>
-    </header>
-
-    <main class="content-sections">
-      
-      <section class="section-block">
-        <h2 class="section-title">что то мое</h2>
-        <div class="item-group">
-          <a href="donate.html" class="item-link">
-            <span>поддержка меня</span> <span class="arrow">&rarr;</span>
-          </a>
-          <p class="item-subtext">способы меня денежно поддержать</p>
-
-          <a href="server.html" class="item-link" style="margin-top: 15px;">
-            <span>мой сервер</span> <span class="arrow">&rarr;</span>
-          </a>
-          <p class="item-subtext">селфхост</p>
-          
-          <div class="social-icons-row">
-            <a href="https://t.me/saivan4ick" target="_blank" rel="noopener" class="social-icon-link telegram" title="Telegram">
-              <img src="img/Telegram_logo.webp" alt="Telegram" class="social-icon-img">
-            </a>
-            <a href="https://youtube.com/saivan" target="_blank" rel="noopener" class="social-icon-link youtube" title="YouTube">
-              <img src="img/YouTube_logo.webp" alt="YouTube" class="social-icon-img">
-            </a>
-            <a href="https://tiktok.com/@saivannxd" target="_blank" rel="noopener" class="social-icon-link tiktok" title="TikTok">
-              <img src="img/logo-tik-tok_578229-290.avif" alt="TikTok" class="social-icon-img">
-            </a>
+    <div id="canvas-container">
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <h1 class="hello-text">Привет, я Сайван!</h1>
+    <div class="about-me-div">
+      <h1 class="about-me-title">Обо мне:</h1>
+      <p class="about-me-paragraph">Меня зовут Вася.<br>
+        Я из 🇧🇾 Беларуси (Минск). Я программирую некоторые вещи.<br>
+        Также сижу в интернете и делаю что то в нем.<br>
+        Остальное знают те кто знаком со мной :)</p>
+    </div>
+    <div class="projects-div">
+      <h1 class="projects-title">Мои проекты</h1>
+      <ul class="projects-list">
+        <li>
+          <div class="project-info">
+            <div class="project-name"><a href="https://github.com/saivan4ick/saivanbot">saivanbot</a></div>
+            <div class="project-desc">мой телеграм бот предложка для предложений</div>
           </div>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <h2 class="section-title">штуки которые делал</h2>
-        <div class="item-group">
-          <a href="https://github.com/saivan4ick/saivanbot" target="_blank" rel="noopener" class="item-link">
-            <span>saivanbot</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-          <p class="item-subtext">telegram бот предложка с возможностью<br>отправить сообщения (также с картинками) анонимно</p>
-
-          <a href="https://saivan4ick.github.io/repo/" target="_blank" rel="noopener" class="item-link" style="margin-top: 15px;">
-            <span>джейлбрейк репозиторий для iOS</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-          <p class="item-subtext">репозиторий для взломанных iOS с джейлбрейком<br>там твики и всякое что вам будет полезно взломщики :)</p>
-          <p class="item-subtext" style="margin-top: 10px; opacity: 0.8;">пока что все в будущем буду дополнять</p>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <h2 class="section-title">как связаться со мной?</h2>
-        <div class="contact-links-row">
-          <a href="https://t.me/saivann" target="_blank" rel="noopener" class="contact-btn">
-            <img src="img/Telegram_logo.webp" alt="Telegram" class="contact-btn-icon">
-            <span>телеграм</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-          <a href="mailto:vasilsalkou@gmail.com" target="_blank" rel="noopener" class="contact-btn">
-            <svg class="contact-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="16" x="2" y="4" rx="2"/>
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-            </svg>
-            <span>мэйлбокс</span>
-            <span class="arrow">&rarr;</span>
-          </a>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <h2 class="section-title">моя кнопка</h2>
-        <div class="item-group">
-          <img src="img/button_saivan.png" alt="Моя кнопка saivan" class="badge-88x31 my-button-badge">
-          <textarea class="button-code-textarea" readonly onclick="this.select()"><a href="https://saivan4ick.github.io" target="_blank"><img src="https://saivan4ick.github.io/img/button_saivan.png" width="88" height="31" alt="кликни на меня!"></a></textarea>
-        </div>
-      </section>
-
-      <section class="section-block">
-        <h2 class="section-title" id="lastfm-status">сейчас играет:</h2>
-        <div class="lastfm-widget" id="lastfm-widget">
-          <div class="lastfm-cover-wrap">
-            <img id="lastfm-cover" src="img/killua.gif" alt="Обложка трека" class="lastfm-cover">
+        </li>
+        <li>
+          <div class="project-info">
+            <div class="project-name"><a href="https://saivan4ick.github.io/repo/">saivan repo</a></div>
+            <div class="project-desc">джейлбрейк репозиторий для взломанных iOS с твиками</div>
           </div>
-          <div class="lastfm-info">
-            <div class="lastfm-track-row">
-              <a id="lastfm-track" href="https://www.last.fm/user/saivan4ick" target="_blank" rel="noopener" class="lastfm-track-link">Загрузка...</a>
-              <span id="lastfm-heart" class="lastfm-heart" style="display: none;"></span>
-            </div>
-            <a id="lastfm-artist" href="https://www.last.fm/user/saivan4ick" target="_blank" rel="noopener" class="lastfm-artist-link"></a>
-            <span id="lastfm-date" class="lastfm-date"></span>
+        </li>
+        <li>
+          <div class="project-info">
+            <div class="project-name"><a href="https://github.com/MKfun/MKch-Pay">MKch Pay</a></p></div>
+            <div class="project-desc">бот для оплаты пасскода на MKch</div>
           </div>
-        </div>
-      </section>
-
-    </main>
-
-    <footer class="site-footer">
-      <a href="https://www.last.fm/user/saivan4ick" target="_blank" rel="noopener" class="userbar-link" title="Last.fm Profile">
-        <img src="img/lastfm_userbar.png" alt="Last.fm Userbar" class="lastfm-userbar">
-      </a>
-      <a href="https://mynickname.com/saivan" target="_blank" rel="noopener" class="userbar-link" title="Ник saivan зарегистрирован!">
-        <img src="img/saivan.gif" alt="Ник saivan зарегистрирован!" class="nickname-userbar">
-      </a>
-      <div class="footer-buttons">
-        <a href="https://github.com/saivan4ick" target="_blank" rel="noopener" class="badge-link" title="GitHub Profile">
-          <img src="img/github.gif" alt="GitHub" class="badge-88x31">
+        </li>
+      </ul>
+    </div>
+    <div class="header-div">
+      <h1 class="header-text">В данный момент я использую:</h1>
+      <ul class="header-ul">
+        <li class="header-li">
+          <p class="header-paragraph">Ryzen 3 2200g, Radeon Vega 8 с Windows 11</p>
+        </li>
+        <li class="header-li">
+          <p class="header-paragraph">Samsung S20 FE (Snapdragon) с Lineage OS 23.2</p>
+        </li>
+      </ul>
+    </div>
+    <div class="socials-div">
+      <h1 class="socials-title">(Социал) сети:</h1>
+      <a href="https://t.me/saivan4ick" target="_blank">
+        <p class="socials-paragraph"><img src="img/arrows.png" class="socials-icon" alt="->"><span>Telegram:</span> <span class="social-link">https://t.me/saivan4ick</span></p>
         </a>
-        <span class="badge-link" title="Made with Windows">
-          <img src="img/made_with_windows.gif" alt="Made with Windows" class="badge-88x31">
-        </span>
-        <a href="https://osu.ppy.sh/users/38332210" target="_blank" rel="noopener" class="badge-link" title="osu! Profile">
-          <img src="img/osu.gif" alt="osu!" class="badge-88x31">
+        <a href="https://tiktok.com/@saivannxd" target="_blank">
+        <p class="socials-paragraph"><img src="img/arrows.png" class="socials-icon" alt="->"><span>TikTok:</span> <span class="social-link">https://tiktok.com/@saivannxd</span></p>
         </a>
-        <a href="https://iwddie.whenill.cyou/" target="_blank" rel="noopener" class="badge-link" title="den4ik">
-          <img src="img/den4ik.png" alt="den4ik" class="badge-88x31">
+        <a href="https://youtube.com/saivan" target="_blank">
+        <p class="socials-paragraph"><img src="img/arrows.png" class="socials-icon" alt="->"><span>YouTube:</span> <span class="social-link">https://youtube.com/saivan</span></p>
         </a>
-        <a href="https://tetopie.lol" target="_blank" rel="noopener" class="badge-link" title="tetopie">
-          <img src="img/tetodev.gif" alt="tetopie" class="badge-88x31">
-        </a>
-        <a href="https://ublockorigin.com" target="_blank" rel="noopener" class="badge-link" title="uBlock Origin">
-          <img src="img/ublock.png" alt="uBlock Origin" class="badge-88x31">
-        </a>
-        <a href="https://cyber.dabamos.de/88x31" target="_blank" rel="noopener" class="badge-link" title="88x31 Collection">
-          <img src="img/88x31.gif" alt="88x31 Collection" class="badge-88x31">
-        </a>
-        <a href="https://firefox.com" target="_blank" rel="noopener" class="badge-link" title="Firefox">
-          <img src="img/firefox.gif" alt="Firefox" class="badge-88x31">
-        </a>
-        <a href="https://www.foobar2000.org/" target="_blank" rel="noopener" class="badge-link" title="foobar2000">
-          <img src="img/foobar2000.gif" alt="foobar2000" class="badge-88x31">
+        <a href="https://steamcommunity.com/id/saivan" target="_blank">
+        <p class="socials-paragraph"><img src="img/arrows.png" class="socials-icon" alt="->"><span>Steam:</span> <span class="social-link">https://steamcommunity.com/id/saivan</span></p>
         </a>
       </div>
-      <p class="copyright">&copy; saivan / спасибо <a href="https://iwddie.whenill.cyou/" target="_blank" rel="noopener">den4iklovelinux</a> за фон для сайта / <a href="https://github.com/saivan4ick/saivan4ick.github.io" target="_blank">source code</a></p>
-    </footer>
-  </div>
+      <div class="buttons-container">
+        <a href="https://cyber.dabamos.de/88x31"><img src="img/88x31.gif" alt="88x31"></a>
+        <a href="https://saivan4ick.github.io/"><img src="img/button_saivan.png" alt="saivan"></a>
+        <a href="https://iwddie.whenill.cyou/"><img src="img/den4ik.png" alt="den4ik"></a>
+        <a href="https://firefox.com"><img src="img/firefox.gif" alt="firefox"></a>
+        <a href="https://www.foobar2000.org/"><img src="img/foobar2000.gif" alt="foobar2000"></a>
+        <a href="https://quake.bethesda.net/"><img src="img/getquake.gif" alt="quake"></a>
+        <a href="https://github.com/saivan4ick" ><img src="img/github.gif" alt="github"></a >
+        <a href="https://last.fm/user/saivan4ick"><img src="img/lastfm.gif" alt="lastfm"></a>
+        <a href="https://windows.com/"><img src="img/made_with_windows.gif" alt="windows"></a>
+        <a href="https://osu.ppy.sh/users/38332210"><img src="img/osu.gif" alt="osu"></a>
+        <a href="https://www.half-life.com/"><img src="img/planet_half-life.gif" alt="half-life"></a>
+        <a href="https://tetopie.lol/"><img src="img/tetodev.gif" alt="tetodev"></a>
+        <a href="https://ublockorigin.com/"><img src="img/ublock.png" alt="ublock"></a>
+      </div>
+      
+      <div id="lastfm-widget" class="loading">
+        <div id="lastfm-status">Последний трек:</div>
+        <div class="lastfm-content">
+          <img id="lastfm-cover" src="" alt="">
+          <div class="lastfm-info">
+            <div class="lastfm-header">
+              <a id="lastfm-track" href="#" target="_blank">Загрузка...</a>
+              <span id="lastfm-heart"></span>
+            </div>
+            <a id="lastfm-artist" href="#" target="_blank"></a>
+            <div id="lastfm-date"></div>
+          </div>
+        </div>
+      </div>
 
-  <script src="lastfm.js?v=1.1"></script>
+      <footer class="site-footer">
+        <p>© saivan / спасибо <a href="https://iwddie.whenill.cyou/" target="_blank">den4iklovelinux</a> за фон для сайта / <a href="https://github.com/saivan4ick/saivan4ick.github.io" target="_blank">source code</a></p>
+      </footer>
+    <script src="app.js"></script>
+    <script src="lastfm.js"></script>
 </body>
 </html>
-
